@@ -1,0 +1,19 @@
+GET http://localhost:8080/exam/java/fill
+Accept: application/json
+###
+
+GET http://localhost:8080/exam/java/add?question=addquestion&answer=addanswer
+Accept: application/json
+###
+
+GET http://localhost:8080/exam/java/remove?question=question1&answer=answer1
+Accept: application/json
+###
+
+GET http://localhost:8080/exam/java/
+Accept: application/json
+###
+
+GET http://localhost:8080/exam/get?amount=5
+Accept: application/json
+###
