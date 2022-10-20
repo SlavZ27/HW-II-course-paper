@@ -7,20 +7,21 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pro.sky.hwiicoursepaper.entity.Question;
 import pro.sky.hwiicoursepaper.exception.*;
-import pro.sky.hwiicoursepaper.repository.JavaQuestionRepository;
+import pro.sky.hwiicoursepaper.repository.MathQuestionRepository;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class JavaQuestionServiceTest {
+class MathQuestionServiceTest {
 
     @Mock
-    private JavaQuestionRepository javaQuestionRepository = new JavaQuestionRepository();
+    private MathQuestionRepository mathQuestionRepository = new MathQuestionRepository();
 
-    private JavaQuestionService javaQuestionService;
+    private MathQuestionService mathQuestionService;
 
     Set<Question> q0;
     Set<Question> q1;
@@ -39,7 +40,7 @@ class JavaQuestionServiceTest {
 
     @BeforeEach
     void setUp() {
-        javaQuestionService = new JavaQuestionService(javaQuestionRepository);
+        mathQuestionService = new MathQuestionService(mathQuestionRepository);
         question1 = new Question("question1", "answer1");
         question2 = new Question("question2", "answer2");
         question3 = new Question("question3", "answer3");
@@ -66,7 +67,7 @@ class JavaQuestionServiceTest {
     @Test
     public void addTest() {
 
-        when(javaQuestionRepository.getAll())
+        when(mathQuestionRepository.getAll())
                 .thenReturn(q0)          //getSize
                 .thenReturn(q0)          //add(question1
                 .thenReturn(q1)          //add(question2
@@ -75,65 +76,65 @@ class JavaQuestionServiceTest {
                 .thenReturn(q1q2q3q4)          //add(question5
                 .thenReturn(q1q2q3q4q5);          //other
 
-        assertEquals(0, javaQuestionService.getSize());
+        assertEquals(0, mathQuestionService.getSize());
 
-        javaQuestionService.add(question1.getQuestion(), question1.getAnswer());
-        javaQuestionService.add(question2);
-        javaQuestionService.add(question3);
-        javaQuestionService.add(question4.getQuestion(), question4.getAnswer());
-        javaQuestionService.add(question5.getQuestion(), question5.getAnswer());
+        mathQuestionService.add(question1.getQuestion(), question1.getAnswer());
+        mathQuestionService.add(question2);
+        mathQuestionService.add(question3);
+        mathQuestionService.add(question4.getQuestion(), question4.getAnswer());
+        mathQuestionService.add(question5.getQuestion(), question5.getAnswer());
 
-        assertEquals(javaQuestionService.getAll(), q1q2q3q4q5);
+        assertEquals(mathQuestionService.getAll(), q1q2q3q4q5);
 
-        assertThrows(QuestionAlreadyExistException.class, () -> javaQuestionService.add(question5_2));
-        assertThrows(QuestionAlreadyExistException.class, () -> javaQuestionService.add(question5_3.getQuestion(), question5_3.getAnswer()));
+        assertThrows(QuestionAlreadyExistException.class, () -> mathQuestionService.add(question5_2));
+        assertThrows(QuestionAlreadyExistException.class, () -> mathQuestionService.add(question5_3.getQuestion(), question5_3.getAnswer()));
 
-        assertThrows(BadQuestionException.class, () -> javaQuestionService.add(null, "asd"));
-        assertThrows(BadQuestionException.class, () -> javaQuestionService.add("", "asd"));
-        assertThrows(BadQuestionException.class, () -> javaQuestionService.add(" ", "sad"));
+        assertThrows(BadQuestionException.class, () -> mathQuestionService.add(null, "asd"));
+        assertThrows(BadQuestionException.class, () -> mathQuestionService.add("", "asd"));
+        assertThrows(BadQuestionException.class, () -> mathQuestionService.add(" ", "sad"));
 
-        assertThrows(BadAnswerException.class, () -> javaQuestionService.add("asd", null));
-        assertThrows(BadAnswerException.class, () -> javaQuestionService.add("asd", ""));
-        assertThrows(BadAnswerException.class, () -> javaQuestionService.add("asd", " "));
+        assertThrows(BadAnswerException.class, () -> mathQuestionService.add("asd", null));
+        assertThrows(BadAnswerException.class, () -> mathQuestionService.add("asd", ""));
+        assertThrows(BadAnswerException.class, () -> mathQuestionService.add("asd", " "));
 
-        assertThrows(BadQuestionObjectException.class, () -> javaQuestionService.add(null));
+        assertThrows(BadQuestionObjectException.class, () -> mathQuestionService.add(null));
     }
 
 
     @Test
     public void removeTest() {
 //q1 q2 q3 q4 q5
-        when(javaQuestionRepository.getAll())
+        when(mathQuestionRepository.getAll())
                 .thenReturn(q1q2q3q4q5);          //other
 
-        assertEquals(5, javaQuestionService.getSize());
+        assertEquals(5, mathQuestionService.getSize());
 
-        javaQuestionService.remove(question2);
+        mathQuestionService.remove(question2);
 //q1 q3 q4 q5
 
         Set<Question> q1q3q4q5 = new HashSet<>(q1q2q3q4q5);
         q1q3q4q5.remove(question2);
         //q1 q3 q4 q5
-        when(javaQuestionRepository.getAll())
+        when(mathQuestionRepository.getAll())
                 .thenReturn(q1q3q4q5);        //other
 
-        assertIterableEquals(javaQuestionService.getAll(), q1q3q4q5);
+        assertIterableEquals(mathQuestionService.getAll(), q1q3q4q5);
 
-        javaQuestionService.remove(question3.getQuestion(), question3.getAnswer());
+        mathQuestionService.remove(question3.getQuestion(), question3.getAnswer());
 //q1 q4 q5
 
         Set<Question> q1q4q5 = new HashSet<>(q1q3q4q5);
         q1q4q5.remove(question3);
         //q1 q4 q5
-        when(javaQuestionRepository.getAll())
+        when(mathQuestionRepository.getAll())
                 .thenReturn(q1q4q5);               //other
 
 
-        assertIterableEquals(javaQuestionService.getAll(), q1q4q5);
+        assertIterableEquals(mathQuestionService.getAll(), q1q4q5);
 
-        assertThrows(QuestionNotFoundException.class, () -> javaQuestionService.remove(new Question("", "asd")));
-        assertThrows(QuestionNotFoundException.class, () -> javaQuestionService.remove(new Question(" ", "sad")));
-        assertThrows(BadQuestionObjectException.class, () -> javaQuestionService.remove(null));
+        assertThrows(QuestionNotFoundException.class, () -> mathQuestionService.remove(new Question("", "asd")));
+        assertThrows(QuestionNotFoundException.class, () -> mathQuestionService.remove(new Question(" ", "sad")));
+        assertThrows(BadQuestionObjectException.class, () -> mathQuestionService.remove(null));
     }
 
     @Test
@@ -145,12 +146,12 @@ class JavaQuestionServiceTest {
         expected.add(question4);
         expected.add(question5);
 
-        when(javaQuestionRepository.getAll())
+        when(mathQuestionRepository.getAll())
                 .thenReturn(q1q2q3q4q5);          //other
 
-        assertEquals(5, javaQuestionService.getSize());
+        assertEquals(5, mathQuestionService.getSize());
 
-        Set<Question> actual = javaQuestionService.getAll();
+        Set<Question> actual = mathQuestionService.getAll();
         assertIterableEquals(expected, actual);
     }
 
@@ -164,15 +165,15 @@ class JavaQuestionServiceTest {
         expected.add(question4);
         expected.add(question5);
 
-        when(javaQuestionRepository.getAll())
+        when(mathQuestionRepository.getAll())
                 .thenReturn(q1q2q3q4q5);          //other
 
-        assertEquals(5, javaQuestionService.getSize());
+        assertEquals(5, mathQuestionService.getSize());
 
-        assertTrue(expected.contains(javaQuestionService.getRandom()));
-        assertTrue(expected.contains(javaQuestionService.getRandom()));
-        assertTrue(expected.contains(javaQuestionService.getRandom()));
-        assertTrue(expected.contains(javaQuestionService.getRandom()));
-        assertTrue(expected.contains(javaQuestionService.getRandom()));
+        assertTrue(expected.contains(mathQuestionService.getRandom()));
+        assertTrue(expected.contains(mathQuestionService.getRandom()));
+        assertTrue(expected.contains(mathQuestionService.getRandom()));
+        assertTrue(expected.contains(mathQuestionService.getRandom()));
+        assertTrue(expected.contains(mathQuestionService.getRandom()));
     }
 }

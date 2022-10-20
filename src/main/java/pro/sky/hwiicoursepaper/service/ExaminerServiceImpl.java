@@ -10,17 +10,21 @@ import java.util.Random;
 @Service
 public class ExaminerServiceImpl implements ExaminerService {
 
-    private QuestionService questionService;
+    private JavaQuestionService javaQuestionService;
+    private MathQuestionService mathQuestionService;
 
-    public ExaminerServiceImpl(QuestionService questionService) {
-        this.questionService = questionService;
+    public ExaminerServiceImpl(JavaQuestionService javaQuestionService, MathQuestionService mathQuestionService) {
+        this.javaQuestionService = javaQuestionService;
+        this.mathQuestionService = mathQuestionService;
     }
 
     @Override
     public List<Question> getQuestions(int amount) {
-        List<Question> questionList = questionService.getAll();
+        List<Question> questionList = new ArrayList<>();
+        questionList.addAll(javaQuestionService.getAll());
+        questionList.addAll(mathQuestionService.getAll());
 
-        if (amount > questionList.size() || amount < 0) {
+        if (amount < 0 || questionList.size() < amount) {
             throw new IllegalArgumentException("Такого количества вопросов нет в списке");
         }
 

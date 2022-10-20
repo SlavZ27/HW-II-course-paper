@@ -1,16 +1,25 @@
-GET http://localhost:8080/exam/java/fill
-Accept: application/json
-###
 
 GET http://localhost:8080/exam/java/add?question=addquestion&answer=addanswer
 Accept: application/json
 ###
 
-GET http://localhost:8080/exam/java/remove?question=question1&answer=answer1
+GET http://localhost:8080/exam/math/add?question=addquestion&answer=addanswer
+Accept: application/json
+###
+
+GET http://localhost:8080/exam/java/remove?question=javaQuestion1&answer=javaAnswer1
+Accept: application/json
+###
+
+GET http://localhost:8080/exam/math/remove?question=mathQuestion1&answer=mathAnswer1
 Accept: application/json
 ###
 
 GET http://localhost:8080/exam/java/
+Accept: application/json
+###
+
+GET http://localhost:8080/exam/math/
 Accept: application/json
 ###
 

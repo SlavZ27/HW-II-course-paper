@@ -4,19 +4,19 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import pro.sky.hwiicoursepaper.entity.Question;
 import pro.sky.hwiicoursepaper.exception.*;
-import pro.sky.hwiicoursepaper.repository.JavaQuestionRepository;
+import pro.sky.hwiicoursepaper.repository.MathQuestionRepository;
 
 import java.util.*;
 
 import static pro.sky.hwiicoursepaper.exception.TextException.*;
 
 @Service
-public class JavaQuestionService implements QuestionService {
+public class MathQuestionService implements QuestionService {
 
-    private JavaQuestionRepository javaQuestionRepository;
+    private MathQuestionRepository mathQuestionRepository;
 
-    public JavaQuestionService(JavaQuestionRepository javaQuestionRepository) {
-        this.javaQuestionRepository = javaQuestionRepository;
+    public MathQuestionService(MathQuestionRepository mathQuestionRepository) {
+        this.mathQuestionRepository = mathQuestionRepository;
     }
 
     private String validateQuestionStr(String str) {
@@ -27,7 +27,7 @@ public class JavaQuestionService implements QuestionService {
     }
 
     private void checkContainQuestion(Question question, boolean isNeedToContain) {
-        Set<Question> tmpSet = new HashSet<>(javaQuestionRepository.getAll());
+        Set<Question> tmpSet = new HashSet<>(mathQuestionRepository.getAll());
         if (tmpSet.contains(question) && !isNeedToContain) {
             throw new QuestionAlreadyExistException(QUESTION_ALREADY_EXIST_EXCEPTION);
         }
@@ -59,7 +59,7 @@ public class JavaQuestionService implements QuestionService {
         validateAnswerStr(answer);
         checkContainQuestion(question, false);
 
-        return javaQuestionRepository.add(new Question(question, answer));
+        return mathQuestionRepository.add(new Question(question, answer));
     }
 
     @Override
@@ -68,13 +68,13 @@ public class JavaQuestionService implements QuestionService {
         validateQuestionStr(question.getQuestion());
         validateAnswerStr(question.getAnswer());
         checkContainQuestion(question, false);
-        return javaQuestionRepository.add(question);
+        return mathQuestionRepository.add(question);
     }
 
     public Question remove(Question question) {
         validateQuestionObj(question);
         checkContainQuestion(question, true);
-        return javaQuestionRepository.remove(question);
+        return mathQuestionRepository.remove(question);
     }
 
     @Override
@@ -82,21 +82,21 @@ public class JavaQuestionService implements QuestionService {
         validateAnswerStr(question);
         validateAnswerStr(answer);
         checkContainQuestion(question, true);
-        return javaQuestionRepository.remove(new Question(question, answer));
+        return mathQuestionRepository.remove(new Question(question, answer));
     }
 
     @Override
     public Set<Question> getAll() {
-        return Collections.unmodifiableSet(javaQuestionRepository.getAll());
+        return Collections.unmodifiableSet(mathQuestionRepository.getAll());
     }
 
     public int getSize() {
-        return javaQuestionRepository.getAll().size();
+        return mathQuestionRepository.getAll().size();
     }
 
     @Override
     public Question getRandom() {
-        Set<Question> questionSet = new HashSet<>(javaQuestionRepository.getAll());
+        Set<Question> questionSet = new HashSet<>(mathQuestionRepository.getAll());
         return new Question(Objects.requireNonNull(questionSet.stream().findAny().orElse(null)));
     }
 

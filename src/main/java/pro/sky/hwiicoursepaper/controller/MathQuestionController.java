@@ -6,35 +6,35 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pro.sky.hwiicoursepaper.entity.Question;
-import pro.sky.hwiicoursepaper.service.JavaQuestionService;
+import pro.sky.hwiicoursepaper.service.MathQuestionService;
 
 import java.util.Set;
 
 @RestController
-@RequestMapping("/exam/java")
-public class JavaQuestionController {
+@RequestMapping("/exam/math")
+public class MathQuestionController {
 
-    @Qualifier("javaQuestionService")
-    private JavaQuestionService javaQuestionService;
+    @Qualifier("mathQuestionService")
+    private MathQuestionService mathQuestionService;
 
-    public JavaQuestionController(JavaQuestionService javaQuestionService) {
-        this.javaQuestionService = javaQuestionService;
+    public MathQuestionController(MathQuestionService mathQuestionService) {
+        this.mathQuestionService = mathQuestionService;
     }
 
     @GetMapping
     public Set<Question> getAllQuestions() {
-        return javaQuestionService.getAll();
+        return mathQuestionService.getAll();
     }
 
     @GetMapping(path = "/add", params = {"question", "answer"})
     public Question addQuestion(@RequestParam("question") String question,
                                 @RequestParam("answer") String answer) {
-        return javaQuestionService.add(question, answer);
+        return mathQuestionService.add(question, answer);
     }
 
     @GetMapping(path = "/remove", params = {"question", "answer"})
     public Question removeQuestions(@RequestParam("question") String question,
-                                        @RequestParam("answer") String answer) {
-        return javaQuestionService.remove(question, answer);
+                                    @RequestParam("answer") String answer) {
+        return mathQuestionService.remove(question, answer);
     }
 }
