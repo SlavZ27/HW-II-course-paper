@@ -1,10 +1,12 @@
 package pro.sky.hwiicoursepaper.service;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import pro.sky.hwiicoursepaper.entity.Question;
 import pro.sky.hwiicoursepaper.exception.*;
-import pro.sky.hwiicoursepaper.repository.JavaQuestionRepository;
+import pro.sky.hwiicoursepaper.repository.QuestionRepository;
 
 import java.util.*;
 
@@ -13,9 +15,11 @@ import static pro.sky.hwiicoursepaper.exception.TextException.*;
 @Service
 public class JavaQuestionService implements QuestionService {
 
-    private JavaQuestionRepository javaQuestionRepository;
+    @Qualifier("javaQuestionService")
+    private QuestionRepository javaQuestionRepository;
 
-    public JavaQuestionService(JavaQuestionRepository javaQuestionRepository) {
+    @Autowired
+    public JavaQuestionService(@Qualifier("javaQuestionRepository") QuestionRepository javaQuestionRepository) {
         this.javaQuestionRepository = javaQuestionRepository;
     }
 
@@ -28,10 +32,11 @@ public class JavaQuestionService implements QuestionService {
 
     private void checkContainQuestion(Question question, boolean isNeedToContain) {
         Set<Question> tmpSet = new HashSet<>(javaQuestionRepository.getAll());
-        if (tmpSet.contains(question) && !isNeedToContain) {
+        boolean isContains = tmpSet.contains(question);
+        if (isContains && !isNeedToContain) {
             throw new QuestionAlreadyExistException(QUESTION_ALREADY_EXIST_EXCEPTION);
         }
-        if (!tmpSet.contains(question) && isNeedToContain) {
+        if (!isContains && isNeedToContain) {
             throw new QuestionNotFoundException(TEXT_QUESTION_NOT_FOUND_EXCEPTION);
         }
     }
@@ -97,7 +102,10 @@ public class JavaQuestionService implements QuestionService {
     @Override
     public Question getRandom() {
         Set<Question> questionSet = new HashSet<>(javaQuestionRepository.getAll());
-        return new Question(Objects.requireNonNull(questionSet.stream().findAny().orElse(null)));
+        Random rand = new Random();
+        return questionSet.stream()
+                .skip(rand.nextInt(questionSet.size()-1))
+                .findFirst()
+                .get();
     }
-
 }

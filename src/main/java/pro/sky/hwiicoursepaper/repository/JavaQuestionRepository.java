@@ -3,31 +3,19 @@ package pro.sky.hwiicoursepaper.repository;
 import org.springframework.stereotype.Repository;
 import pro.sky.hwiicoursepaper.entity.Question;
 
-import java.util.*;
+import javax.annotation.PostConstruct;
 
 @Repository
-public class JavaQuestionRepository implements QuestionRepository {
+public class JavaQuestionRepository extends QuestionRepository {
 
-    private Set<Question> questionSet = new HashSet<>();
+    @PostConstruct
+    private void fillAllQuestionRepository() {
+        super.add(new Question("javaQuestion1", "javaAnswer1"));
+        super.add(new Question("javaQuestion2", "javaAnswer2"));
+        super.add(new Question("javaQuestion3", "javaAnswer3"));
+        super.add(new Question("javaQuestion4", "javaAnswer4"));
+        super.add(new Question("javaQuestion5", "javaAnswer5"));
 
-    @Override
-    public Question add(Question question) {
-        questionSet.add(question);
-        return questionSet.stream()
-                .filter(question1 -> question1.equals(question))
-                .findFirst()
-                .orElse(null);
     }
 
-    @Override
-    public Question remove(Question question) {
-        Question tmp = new Question(question);
-        questionSet.remove(question);
-        return tmp;
-    }
-
-    @Override
-    public Set<Question> getAll() {
-        return Collections.unmodifiableSet(questionSet);
-    }
 }

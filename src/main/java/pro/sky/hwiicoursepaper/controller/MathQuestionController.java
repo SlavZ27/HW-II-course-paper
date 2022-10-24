@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pro.sky.hwiicoursepaper.entity.Question;
-import pro.sky.hwiicoursepaper.service.MathQuestionService;
+import pro.sky.hwiicoursepaper.service.QuestionService;
 
 import java.util.Set;
 
@@ -14,10 +14,9 @@ import java.util.Set;
 @RequestMapping("/exam/math")
 public class MathQuestionController {
 
-    @Qualifier("mathQuestionService")
-    private MathQuestionService mathQuestionService;
+    private QuestionService mathQuestionService;
 
-    public MathQuestionController(MathQuestionService mathQuestionService) {
+    public MathQuestionController(@Qualifier("mathQuestionService") QuestionService mathQuestionService) {
         this.mathQuestionService = mathQuestionService;
     }
 

@@ -1,103 +1,131 @@
 package pro.sky.hwiicoursepaper.service;
-
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.MethodNotAllowedException;
 import pro.sky.hwiicoursepaper.entity.Question;
-import pro.sky.hwiicoursepaper.exception.*;
-import pro.sky.hwiicoursepaper.repository.MathQuestionRepository;
 
+import java.text.NumberFormat;
 import java.util.*;
 
-import static pro.sky.hwiicoursepaper.exception.TextException.*;
 
 @Service
 public class MathQuestionService implements QuestionService {
 
-    private MathQuestionRepository mathQuestionRepository;
-
-    public MathQuestionService(MathQuestionRepository mathQuestionRepository) {
-        this.mathQuestionRepository = mathQuestionRepository;
-    }
-
-    private String validateQuestionStr(String str) {
-        if (StringUtils.isBlank(str)) {
-            throw new BadQuestionException(TEXT_BAD_QUESTION_EXCEPTION);
-        }
-        return str;
-    }
-
-    private void checkContainQuestion(Question question, boolean isNeedToContain) {
-        Set<Question> tmpSet = new HashSet<>(mathQuestionRepository.getAll());
-        if (tmpSet.contains(question) && !isNeedToContain) {
-            throw new QuestionAlreadyExistException(QUESTION_ALREADY_EXIST_EXCEPTION);
-        }
-        if (!tmpSet.contains(question) && isNeedToContain) {
-            throw new QuestionNotFoundException(TEXT_QUESTION_NOT_FOUND_EXCEPTION);
-        }
-    }
-
-    private void checkContainQuestion(String question, boolean isNeedToContain) {
-        checkContainQuestion(new Question(question, "56"), isNeedToContain);
-    }
-
-    private String validateAnswerStr(String str) {
-        if (StringUtils.isBlank(str)) {
-            throw new BadAnswerException(TEXT_BAD_ANSWER_EXCEPTION);
-        }
-        return str;
-    }
-
-    private void validateQuestionObj(Question question) {
-        if (question == null) {
-            throw new BadQuestionObjectException(TEXT_BAD_QUESTION_OBJECT_EXCEPTION);
-        }
-    }
-
     @Override
     public Question add(String question, String answer) {
-        validateQuestionStr(question);
-        validateAnswerStr(answer);
-        checkContainQuestion(question, false);
-
-        return mathQuestionRepository.add(new Question(question, answer));
+        throw new MethodNotAllowedException("add", null);
     }
 
     @Override
     public Question add(Question question) {
-        validateQuestionObj(question);
-        validateQuestionStr(question.getQuestion());
-        validateAnswerStr(question.getAnswer());
-        checkContainQuestion(question, false);
-        return mathQuestionRepository.add(question);
+        throw new MethodNotAllowedException("add", null);
     }
 
     public Question remove(Question question) {
-        validateQuestionObj(question);
-        checkContainQuestion(question, true);
-        return mathQuestionRepository.remove(question);
+        throw new MethodNotAllowedException("add", null);
     }
 
     @Override
     public Question remove(String question, String answer) {
-        validateAnswerStr(question);
-        validateAnswerStr(answer);
-        checkContainQuestion(question, true);
-        return mathQuestionRepository.remove(new Question(question, answer));
+        throw new MethodNotAllowedException("add", null);
     }
 
     @Override
     public Set<Question> getAll() {
-        return Collections.unmodifiableSet(mathQuestionRepository.getAll());
-    }
-
-    public int getSize() {
-        return mathQuestionRepository.getAll().size();
+        throw new MethodNotAllowedException("add", null);
     }
 
     @Override
     public Question getRandom() {
-        Set<Question> questionSet = new HashSet<>(mathQuestionRepository.getAll());
-        return new Question(Objects.requireNonNull(questionSet.stream().findAny().orElse(null)));
+        Random rnd = new Random();
+        int countAllOperations = rnd.nextInt(3) + 2;            //сколько всего будет операций
+        int countOperations = 0;                                      //счетчик операций
+
+        List<Float> masValue = new ArrayList<>();                       //Массив значений
+        List<Integer> masOperation = new ArrayList<>();
+        //массив с индексами операций 0 сложение 1 вычитание2 умножение 3 деление
+
+
+        float firstValue = rnd.nextInt(10);                // Первое оператор, ограничено 10
+        StringBuilder question = new StringBuilder(String.valueOf((int) firstValue));         //строка вопроса
+        masValue.add(firstValue);
+
+        //смысл в том чтобы сначала заполнить массив потому что нужно соблюдать очередность выполнения действий
+        while (countOperations < countAllOperations) {  //набираем необходимое количество операций
+            int indexOperation = rnd.nextInt(4);    //случайный индекс операций 0..3
+            float secondValue = rnd.nextInt(10);    //второй оператор значение ограниченное 10
+            if (secondValue == 0 && indexOperation == 3) {  // если значение 0 и операция деления то избавляемся от 0
+                secondValue++;
+            }
+            masOperation.add(indexOperation);       //добавляем индекс операции в массив
+            masValue.add(secondValue);              //добавляем значение в массив
+            question.append(getOperationStr(indexOperation)).append(((int) secondValue));
+            countOperations++;      //дополняем строчку вопроса и делаем +1 счетчику нужных опрераций
+        }
+//теперь приступаем к решению. действуем пока в массиве операций закончаться значения. тогда в массиве операций останется 1 значение
+        while (masOperation.size() > 0) {
+            int i;
+            if (masOperation.contains(2) || masOperation.contains(3)) { //выполняем * / в первую очередб
+                i = -1;
+                for (int i1 = 0; i1 < masOperation.size(); i1++) {//ищем * /
+                    if (masOperation.get(i1) == 2 || masOperation.get(i1) == 3) {
+                        i = i1;
+                        break;
+                    }
+                }
+                //нужно выполнить * или /, избавиться от двух значений и записать одно, и избавиться от 1 операции
+                float tmpResult = 0f;
+                switch (masOperation.get(i)) {  //индекс операции
+                    case 2: { //умножение
+                        tmpResult = masValue.get(i) * masValue.get(i + 1);
+                        break;
+                    }
+                    case 3: { //деление
+                        tmpResult = masValue.get(i) / masValue.get(i + 1);
+                        break;
+                    }
+                }
+                masOperation.remove(i); //удаляем операцию
+                masValue.set(i, tmpResult); //устанавливаем новое значение
+            } else {    //если операторов * / не осталось то делаем операции по порядку пока не останится одно число
+                i = 0;
+                float tmpResult = 0f;
+                switch (masOperation.get(i)) {
+                    case 0: { //сложение
+                        tmpResult = masValue.get(i) + masValue.get(i + 1);
+                        break;
+                    }
+                    case 1: { //вычитание
+                        tmpResult = masValue.get(i) - masValue.get(i + 1);
+                        break;
+                    }
+                }
+                masOperation.remove(i);
+                masValue.set(i, tmpResult);
+            }
+            masValue.remove(i + 1);//удаляем второй оператор
+        }
+
+        NumberFormat nf = NumberFormat.getNumberInstance();
+        nf.setMaximumFractionDigits(2);//округление float до двух знаков, если они есть
+
+        return new Question(question.toString(), nf.format(masValue.get(0)));
     }
 
+    private String getOperationStr(int index) {
+        switch (index) {
+            case 0: {
+                return " + ";
+            }
+            case 1: {
+                return " - ";
+            }
+            case 2: {
+                return " * ";
+            }
+            case 3: {
+                return " / ";
+            }
+        }
+        throw new IllegalArgumentException();
+    }
 }

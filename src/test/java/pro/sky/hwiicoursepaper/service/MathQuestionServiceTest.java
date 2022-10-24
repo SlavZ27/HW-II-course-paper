@@ -3,177 +3,87 @@ package pro.sky.hwiicoursepaper.service;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.server.MethodNotAllowedException;
 import pro.sky.hwiicoursepaper.entity.Question;
-import pro.sky.hwiicoursepaper.exception.*;
-import pro.sky.hwiicoursepaper.repository.MathQuestionRepository;
 
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class MathQuestionServiceTest {
 
-    @Mock
-    private MathQuestionRepository mathQuestionRepository = new MathQuestionRepository();
 
-    private MathQuestionService mathQuestionService;
-
-    Set<Question> q0;
-    Set<Question> q1;
-    Set<Question> q1q2;
-    Set<Question> q1q2q3;
-    Set<Question> q1q2q3q4;
-    Set<Question> q1q2q3q4q5;
-    Question question1;
-    Question question2;
-    Question question3;
-    Question question4;
-    Question question5;
-    Question question5_2;
-    Question question5_3;
-
+    private MathQuestionService mathQuestionService = new MathQuestionService();
 
     @BeforeEach
     void setUp() {
-        mathQuestionService = new MathQuestionService(mathQuestionRepository);
-        question1 = new Question("question1", "answer1");
-        question2 = new Question("question2", "answer2");
-        question3 = new Question("question3", "answer3");
-        question4 = new Question("question4", "answer4");
-        question5 = new Question("question5", "answer5");
-
-        question5_2 = new Question("question5", "answer5");
-        question5_3 = new Question("question5", "234324");
-
-        q0 = new HashSet<>();
-        q1 = new HashSet<>();
-        q1.add(question1);
-        q1q2 = new HashSet<>(q1);
-        q1q2.add(question2);
-        q1q2q3 = new HashSet<>(q1q2);
-        q1q2q3.add(question3);
-        q1q2q3q4 = new HashSet<>(q1q2q3);
-        q1q2q3q4.add(question4);
-        q1q2q3q4q5 = new HashSet<>(q1q2q3q4);
-        q1q2q3q4q5.add(question5);
-        //q1 q2 q3 q4 q5
     }
 
     @Test
     public void addTest() {
+        Question q1 = new Question("Question1", "Answer1");
 
-        when(mathQuestionRepository.getAll())
-                .thenReturn(q0)          //getSize
-                .thenReturn(q0)          //add(question1
-                .thenReturn(q1)          //add(question2
-                .thenReturn(q1q2)          //add(question3
-                .thenReturn(q1q2q3)          //add(question4
-                .thenReturn(q1q2q3q4)          //add(question5
-                .thenReturn(q1q2q3q4q5);          //other
-
-        assertEquals(0, mathQuestionService.getSize());
-
-        mathQuestionService.add(question1.getQuestion(), question1.getAnswer());
-        mathQuestionService.add(question2);
-        mathQuestionService.add(question3);
-        mathQuestionService.add(question4.getQuestion(), question4.getAnswer());
-        mathQuestionService.add(question5.getQuestion(), question5.getAnswer());
-
-        assertEquals(mathQuestionService.getAll(), q1q2q3q4q5);
-
-        assertThrows(QuestionAlreadyExistException.class, () -> mathQuestionService.add(question5_2));
-        assertThrows(QuestionAlreadyExistException.class, () -> mathQuestionService.add(question5_3.getQuestion(), question5_3.getAnswer()));
-
-        assertThrows(BadQuestionException.class, () -> mathQuestionService.add(null, "asd"));
-        assertThrows(BadQuestionException.class, () -> mathQuestionService.add("", "asd"));
-        assertThrows(BadQuestionException.class, () -> mathQuestionService.add(" ", "sad"));
-
-        assertThrows(BadAnswerException.class, () -> mathQuestionService.add("asd", null));
-        assertThrows(BadAnswerException.class, () -> mathQuestionService.add("asd", ""));
-        assertThrows(BadAnswerException.class, () -> mathQuestionService.add("asd", " "));
-
-        assertThrows(BadQuestionObjectException.class, () -> mathQuestionService.add(null));
+        assertThrows(MethodNotAllowedException.class, () -> mathQuestionService.add(null));
+        assertThrows(MethodNotAllowedException.class, () -> mathQuestionService.add(q1));
+        assertThrows(MethodNotAllowedException.class, () -> mathQuestionService.add(q1.getQuestion(), q1.getAnswer()));
+        assertThrows(MethodNotAllowedException.class, () -> mathQuestionService.add("q1.getQuestion()", "q1.getAnswer()"));
     }
 
 
     @Test
     public void removeTest() {
-//q1 q2 q3 q4 q5
-        when(mathQuestionRepository.getAll())
-                .thenReturn(q1q2q3q4q5);          //other
+        Question q1 = new Question("Question1", "Answer1");
 
-        assertEquals(5, mathQuestionService.getSize());
-
-        mathQuestionService.remove(question2);
-//q1 q3 q4 q5
-
-        Set<Question> q1q3q4q5 = new HashSet<>(q1q2q3q4q5);
-        q1q3q4q5.remove(question2);
-        //q1 q3 q4 q5
-        when(mathQuestionRepository.getAll())
-                .thenReturn(q1q3q4q5);        //other
-
-        assertIterableEquals(mathQuestionService.getAll(), q1q3q4q5);
-
-        mathQuestionService.remove(question3.getQuestion(), question3.getAnswer());
-//q1 q4 q5
-
-        Set<Question> q1q4q5 = new HashSet<>(q1q3q4q5);
-        q1q4q5.remove(question3);
-        //q1 q4 q5
-        when(mathQuestionRepository.getAll())
-                .thenReturn(q1q4q5);               //other
-
-
-        assertIterableEquals(mathQuestionService.getAll(), q1q4q5);
-
-        assertThrows(QuestionNotFoundException.class, () -> mathQuestionService.remove(new Question("", "asd")));
-        assertThrows(QuestionNotFoundException.class, () -> mathQuestionService.remove(new Question(" ", "sad")));
-        assertThrows(BadQuestionObjectException.class, () -> mathQuestionService.remove(null));
+        assertThrows(MethodNotAllowedException.class, () -> mathQuestionService.remove(null));
+        assertThrows(MethodNotAllowedException.class, () -> mathQuestionService.remove(q1));
+        assertThrows(MethodNotAllowedException.class, () -> mathQuestionService.remove(q1.getQuestion(), q1.getAnswer()));
+        assertThrows(MethodNotAllowedException.class, () -> mathQuestionService.remove("q1.getQuestion()", "q1.getAnswer()"));
     }
 
     @Test
     public void getAllTest() {
-        Set<Question> expected = new HashSet<>();
-        expected.add(question1);
-        expected.add(question2);
-        expected.add(question3);
-        expected.add(question4);
-        expected.add(question5);
-
-        when(mathQuestionRepository.getAll())
-                .thenReturn(q1q2q3q4q5);          //other
-
-        assertEquals(5, mathQuestionService.getSize());
-
-        Set<Question> actual = mathQuestionService.getAll();
-        assertIterableEquals(expected, actual);
+        assertThrows(MethodNotAllowedException.class, () -> mathQuestionService.getAll());
     }
+
 
     @Test
     public void getRandomTest() {
+//        Question mathQuestion1 = new Question("8 / 9 * 2 * 5 * 6", "53,33");
 
-        Set<Question> expected = new HashSet<>();
-        expected.add(question1);
-        expected.add(question2);
-        expected.add(question3);
-        expected.add(question4);
-        expected.add(question5);
+        Set<String> setCharOperation = new HashSet<>();
+        while (setCharOperation.size() < 4) {
 
-        when(mathQuestionRepository.getAll())
-                .thenReturn(q1q2q3q4q5);          //other
+            Question rndQuestion = mathQuestionService.getRandom();
 
-        assertEquals(5, mathQuestionService.getSize());
+            String[] characters = rndQuestion.getQuestion().split(" ");
 
-        assertTrue(expected.contains(mathQuestionService.getRandom()));
-        assertTrue(expected.contains(mathQuestionService.getRandom()));
-        assertTrue(expected.contains(mathQuestionService.getRandom()));
-        assertTrue(expected.contains(mathQuestionService.getRandom()));
-        assertTrue(expected.contains(mathQuestionService.getRandom()));
+            StringBuilder values = new StringBuilder();
+            StringBuilder operations = new StringBuilder();
+
+            for (int i = 0; i < characters.length; i++) {
+                if (i % 2 != 0) {
+                    operations.append(characters[i]);
+                    setCharOperation.add(characters[i]);
+                } else {
+                    values.append(characters[i]);
+                }
+            }
+
+            assertEquals(values.length(), operations.length() + 1);
+            assertThat(values.toString())
+                    .isNotBlank()
+                    .containsOnlyDigits();
+            assertThat(operations.toString())
+                    .isNotBlank()
+                    .containsAnyOf("+", "-", "*", "/")
+                    .doesNotContainPattern("[0-9]");
+            assertThat(rndQuestion.getAnswer())
+                    .isNotBlank()
+                    .containsPattern("[0-9,]");
+        }
     }
 }

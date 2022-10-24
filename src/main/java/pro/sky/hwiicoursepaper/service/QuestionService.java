@@ -3,7 +3,7 @@ package pro.sky.hwiicoursepaper.service;
 import org.springframework.stereotype.Service;
 import pro.sky.hwiicoursepaper.entity.Question;
 
-import java.util.Collection;
+import java.util.Set;
 
 @Service
 public interface QuestionService {
@@ -16,7 +16,7 @@ public interface QuestionService {
 
     Question remove(String question, String answer);
 
-    Collection<Question> getAll();
+    Set<Question> getAll();
 
     Question getRandom();
 }

@@ -38,10 +38,10 @@ public class Question {
     }
 
     public String getQuestion() {
-        return new String(question);
+        return question;
     }
 
     public String getAnswer() {
-        return new String(answer);
+        return answer;
     }
 }

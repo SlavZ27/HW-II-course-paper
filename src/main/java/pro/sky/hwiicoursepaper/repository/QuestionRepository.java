@@ -3,12 +3,30 @@ package pro.sky.hwiicoursepaper.repository;
 import org.springframework.stereotype.Repository;
 import pro.sky.hwiicoursepaper.entity.Question;
 
-import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 @Repository
-public interface QuestionRepository {
+public abstract class QuestionRepository {
 
-    Question add(Question question);
-    Question remove(Question question);
-    Collection<Question> getAll();
+    private Set<Question> questionSet = new HashSet<>();
+
+    public Question add(Question question) {
+        questionSet.add(question);
+        return questionSet.stream()
+                .filter(question1 -> question1.equals(question))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public Question remove(Question question) {
+        Question tmp = new Question(question);
+        questionSet.remove(question);
+        return tmp;
+    }
+
+    public Set<Question> getAll() {
+        return Collections.unmodifiableSet(questionSet);
+    }
 }

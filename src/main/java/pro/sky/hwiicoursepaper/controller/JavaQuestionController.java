@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pro.sky.hwiicoursepaper.entity.Question;
-import pro.sky.hwiicoursepaper.service.JavaQuestionService;
+import pro.sky.hwiicoursepaper.service.QuestionService;
 
 import java.util.Set;
 
@@ -14,10 +14,9 @@ import java.util.Set;
 @RequestMapping("/exam/java")
 public class JavaQuestionController {
 
-    @Qualifier("javaQuestionService")
-    private JavaQuestionService javaQuestionService;
+    private QuestionService javaQuestionService;
 
-    public JavaQuestionController(JavaQuestionService javaQuestionService) {
+    public JavaQuestionController(@Qualifier("javaQuestionService") QuestionService javaQuestionService) {
         this.javaQuestionService = javaQuestionService;
     }
 
