@@ -1,19 +1,21 @@
 package pro.sky.hwiicoursepaper.service;
 
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Service;
-import pro.sky.hwiicoursepaper.collection.CollectionsConfig;
 import pro.sky.hwiicoursepaper.entity.Question;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 @Service
 public class ExaminerServiceImpl implements ExaminerService {
-    Random random = new Random();
+    private final Random random = new Random();
+    private final Map<String, QuestionService> questionServiceMap;
 
+    public ExaminerServiceImpl(QuestionService javaQuestionService, QuestionService mathQuestionService) {
+        Map<String, QuestionService> result = new HashMap<>();
+        result.put("mathQuestionService", mathQuestionService);
+        result.put("javaQuestionService", javaQuestionService);
+        this.questionServiceMap = result;
+    }
 
     @Override
     public List<Question> getQuestions(int amount) {
@@ -21,14 +23,8 @@ public class ExaminerServiceImpl implements ExaminerService {
             throw new IllegalArgumentException("Некорректный запрос");
         }
 
-        AnnotationConfigApplicationContext context =
-                new AnnotationConfigApplicationContext(CollectionsConfig.class);
-
-        Map<String, QuestionService> questionServicesMap = context.getBean(
-                "questionServicesMap", Map.class);
-
-        QuestionService javaQuestionService = questionServicesMap.get("javaQuestionService");
-        QuestionService mathQuestionService = questionServicesMap.get("mathQuestionService");
+        QuestionService javaQuestionService = questionServiceMap.get("javaQuestionService");
+        QuestionService mathQuestionService = questionServiceMap.get("mathQuestionService");
 
         List<Question> mathSet = new ArrayList<>();
 
@@ -39,7 +35,6 @@ public class ExaminerServiceImpl implements ExaminerService {
             mathSet.add(mathQuestionService.getRandom());
         }
         questionList.addAll(mathSet);
-
 
         while (questionList.size() < amount) {
             questionList.add(mathQuestionService.getRandom());
@@ -53,10 +48,7 @@ public class ExaminerServiceImpl implements ExaminerService {
             tmpIndex = random.nextInt(tmpQuestionList.size());
             resultList.add(tmpQuestionList.get(tmpIndex));
             tmpQuestionList.remove(tmpIndex);
-
         }
-
-        context.close();
         return resultList;
     }
 }

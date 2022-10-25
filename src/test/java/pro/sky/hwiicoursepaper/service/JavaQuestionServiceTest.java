@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
 class JavaQuestionServiceTest {
 
     @Mock
-    private JavaQuestionRepository javaQuestionRepository = new JavaQuestionRepository();
+    private final JavaQuestionRepository javaQuestionRepository = new JavaQuestionRepository();
 
     private JavaQuestionService javaQuestionService;
 

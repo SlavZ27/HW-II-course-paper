@@ -1,6 +1,5 @@
 package pro.sky.hwiicoursepaper.service;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -17,11 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class MathQuestionServiceTest {
 
 
-    private MathQuestionService mathQuestionService = new MathQuestionService();
-
-    @BeforeEach
-    void setUp() {
-    }
+    private final MathQuestionService mathQuestionService = new MathQuestionService();
 
     @Test
     public void addTest() {
@@ -46,7 +41,7 @@ class MathQuestionServiceTest {
 
     @Test
     public void getAllTest() {
-        assertThrows(MethodNotAllowedException.class, () -> mathQuestionService.getAll());
+        assertThrows(MethodNotAllowedException.class, mathQuestionService::getAll);
     }
 
 

@@ -1,4 +1,5 @@
 package pro.sky.hwiicoursepaper.service;
+
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.MethodNotAllowedException;
 import pro.sky.hwiicoursepaper.entity.Question;
@@ -9,6 +10,8 @@ import java.util.*;
 
 @Service
 public class MathQuestionService implements QuestionService {
+    private final Random rnd = new Random();
+
 
     @Override
     public Question add(String question, String answer) {
@@ -21,22 +24,21 @@ public class MathQuestionService implements QuestionService {
     }
 
     public Question remove(Question question) {
-        throw new MethodNotAllowedException("add", null);
+        throw new MethodNotAllowedException("remove", null);
     }
 
     @Override
     public Question remove(String question, String answer) {
-        throw new MethodNotAllowedException("add", null);
+        throw new MethodNotAllowedException("remove", null);
     }
 
     @Override
     public Set<Question> getAll() {
-        throw new MethodNotAllowedException("add", null);
+        throw new MethodNotAllowedException("getAll", null);
     }
 
     @Override
     public Question getRandom() {
-        Random rnd = new Random();
         int countAllOperations = rnd.nextInt(3) + 2;            //сколько всего будет операций
         int countOperations = 0;                                      //счетчик операций
 

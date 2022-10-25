@@ -10,15 +10,15 @@ import pro.sky.hwiicoursepaper.service.ExaminerService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/exam")
+@RequestMapping()
 public class ExamController {
-    private ExaminerService examinerServiceImpl;
+    private final ExaminerService examinerServiceImpl;
 
     public ExamController(ExaminerService examinerServiceImpl) {
         this.examinerServiceImpl = examinerServiceImpl;
     }
 
-    @GetMapping(path = "/get", params = "amount")
+    @GetMapping("/get")
     public List<Question> getListQuestions(@RequestParam("amount") Integer amount) {
         return examinerServiceImpl.getQuestions(amount);
     }

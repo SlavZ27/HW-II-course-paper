@@ -10,14 +10,11 @@ import java.util.Set;
 @Repository
 public abstract class QuestionRepository {
 
-    private Set<Question> questionSet = new HashSet<>();
+    private final Set<Question> questionSet = new HashSet<>();
 
     public Question add(Question question) {
         questionSet.add(question);
-        return questionSet.stream()
-                .filter(question1 -> question1.equals(question))
-                .findFirst()
-                .orElse(null);
+        return question;
     }
 
     public Question remove(Question question) {

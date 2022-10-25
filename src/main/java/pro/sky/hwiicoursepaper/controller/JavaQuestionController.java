@@ -11,10 +11,10 @@ import pro.sky.hwiicoursepaper.service.QuestionService;
 import java.util.Set;
 
 @RestController
-@RequestMapping("/exam/java")
+@RequestMapping("/java")
 public class JavaQuestionController {
 
-    private QuestionService javaQuestionService;
+    private final QuestionService javaQuestionService;
 
     public JavaQuestionController(@Qualifier("javaQuestionService") QuestionService javaQuestionService) {
         this.javaQuestionService = javaQuestionService;
