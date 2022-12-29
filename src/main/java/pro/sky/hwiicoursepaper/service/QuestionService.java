@@ -1,17 +1,22 @@
 package pro.sky.hwiicoursepaper.service;
 
 import org.springframework.stereotype.Service;
+import pro.sky.hwiicoursepaper.entity.Question;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
 @Service
-public class QuestionService {
-    public List<String> getListQuestions(Integer amount) {
-        ArrayList<String> qwe = new ArrayList<>();
-        qwe.add("1");
-        qwe.add("2");
-        qwe.add("3");
-        return qwe;
-    }
+public interface QuestionService {
+
+    Question add(String question, String answer);
+
+
+    Question add(Question question);
+
+
+    Question remove(String question, String answer);
+
+    Set<Question> getAll();
+
+    Question getRandom();
 }
